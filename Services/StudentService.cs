@@ -10,7 +10,7 @@ namespace StudentApplication.Services
         Task<Student> getStudent(int StudentId);
         Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday);
         Task<Student> updateStudent(int StudentId, string? StudentName = null, string? StudentLastName = null, string? Email = null, string? Birthday = null);
-        Task<Student> deleteStudent(int StudentId);
+        Task<Student> deleteStudent(int StudentId, bool Active);
     }
 
     public class StudentService : IStudentService
@@ -20,9 +20,7 @@ namespace StudentApplication.Services
 
         public StudentService(IStudentRepository studentRepository)
         {
-
             _studentRepository = studentRepository;
-
         }
 
         public async Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday)
@@ -69,9 +67,9 @@ namespace StudentApplication.Services
             return await _studentRepository.updateStudent(student);
         }
 
-        public async Task<Student> deleteStudent(int StudentId)
+        public async Task<Student> deleteStudent(int StudentId, bool Active)
         {
-            return await _studentRepository.deleteStudent(StudentId);
+            return await _studentRepository.deleteStudent(StudentId,Active);
         }
 
     }
