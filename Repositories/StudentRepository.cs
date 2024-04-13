@@ -11,7 +11,7 @@ namespace StudentApplication.Repositories
         Task<Student> getStudent(int StudentId);
         Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday); //duda para llenar el campo de Active 
         Task<Student> updateStudent(Student student);
-        Task<Student> deleteStudent(Student student);
+        Task<Student> deleteStudent(int StudentId, bool Active);
     }
 
     public class StudentRepository : IStudentRepository
@@ -53,9 +53,15 @@ namespace StudentApplication.Repositories
             return student;
         }
 
-        public Task<Student> deleteStudent(Student student)
+        public  async Task<Student> deleteStudent(int StudentId, bool Active)
         {
-            throw new NotImplementedException();
+            var student = await _db.Students.FindAsync(StudentId);
+            if (student != null)
+            {
+                student.Active = Active;
+                await _db.SaveChangesAsync();   
+            }
+            return student;
         }
     }
 }
