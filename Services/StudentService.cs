@@ -71,6 +71,6 @@ namespace StudentApplication.Services
         {
             return await _studentRepository.deleteStudent(StudentId,Active);
         }
-
+        
     }
 }   

@@ -10,10 +10,10 @@ namespace StudentApplication.Models
         public  int StudentId { get; set; }
         public  string StudentName { get; set; }
         public  string StudentLastName { get; set; }
-            public string Email { get; set; }
+        public string Email { get; set; }
         public  string Birthdate { get; set; }
-        //Anadir estado de si la cuenta esta eliminada o no
-        public bool Active { get; set; }
+
+        public bool Active { get; set; } = true;
         public  List<Grade> Grades { get; set; }
         public  List<Attendance> Attendances { get; set; }
     }
