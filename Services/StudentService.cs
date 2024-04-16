@@ -10,7 +10,7 @@ namespace StudentApplication.Services
         Task<Student> getStudent(int StudentId);
         Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday);
         Task<Student> updateStudent(int StudentId, string? StudentName = null, string? StudentLastName = null, string? Email = null, string? Birthday = null);
-        Task<Student> deleteStudent(int StudentId, bool Active);
+        Task<Student> deleteStudent(int StudentId, bool Active = false);
     }
 
     public class StudentService : IStudentService
@@ -42,7 +42,12 @@ namespace StudentApplication.Services
         {
             Student student = await _studentRepository.getStudent(StudentId);
 
-            if (student != null)
+            if (StudentId<= 0)
+            {
+                throw new ArgumentException("Student ID debe ser numero positivo.");
+            }
+
+            if (student == null)
             {
                 return null;
             }
@@ -69,8 +74,18 @@ namespace StudentApplication.Services
 
         public async Task<Student> deleteStudent(int StudentId, bool Active)
         {
-            return await _studentRepository.deleteStudent(StudentId,Active);
+            Student student = await _studentRepository.getStudent(StudentId);
+            if (student == null)
+            {
+                return null; 
+            }
+            if (Active)
+            {
+                student.Active = Active; 
+            }
+            await _studentRepository.deleteStudent(student.StudentId,Active);
+            return student;
         }
-        
+
     }
-}   
+}

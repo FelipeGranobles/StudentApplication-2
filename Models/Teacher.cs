@@ -7,6 +7,7 @@
         public string? TeacherLastName { get; set; }
         public string? TeacherEmail { get; set; }
         public string? TeacherPhone {  get; set; }
+        public bool ActiveTeacher { get; set; }
         public List<Subject>? Subject { get; set; }
 
     }

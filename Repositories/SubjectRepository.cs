@@ -8,9 +8,9 @@ namespace StudentApplication.Repositories
     {
         Task<List<Subject>> GetSubjects();
         Task<Subject> GetSubject(int SubjectId);
-        Task<Subject> CreateSubject(int ClassId, string SubjectName, string Subjectcode /*,Teacher teacher*/);
+        Task<Subject> CreateSubject(int ClassId, string SubjectName, string Subjectcode ,Teacher teacher);
         Task<Subject> UpdateSubject(Subject subject);
-        Task<Subject> DeleteSubject(Subject subject);
+        Task<Subject> DeleteSubject(int SubjectId, bool ActiveSubject);
     }
 
     public class SubjectRepository : ISubjectRepository
@@ -21,13 +21,15 @@ namespace StudentApplication.Repositories
             _db = db;
         }
 
-        public async Task<Subject> CreateSubject(int ClassId, string SubjectName, string Subjectcode /*,Teacher teacher*/)
+        public async Task<Subject> CreateSubject(int ClassId, string SubjectName, string Subjectcode ,Teacher Teacher)
         {
             Subject newSubject = new Subject
             {
                 ClassId = ClassId,
                 SubjectName = SubjectName,
-                Subjectcode = Subjectcode
+                Subjectcode = Subjectcode,
+                Teacher = Teacher,
+                ActiveSubject = true
             };
             await _db.Subjects.AddAsync( newSubject );  
             _db.SaveChanges();
@@ -36,9 +38,16 @@ namespace StudentApplication.Repositories
             // throw new NotImplementedException();
         }   
 
-        public Task<Subject> DeleteSubject(Subject subject)
+        public async Task<Subject> DeleteSubject(int SubjectId,bool ActiveSubject)
         {
-            throw new NotImplementedException();
+            var subject = await _db.Subjects.FindAsync(SubjectId);
+            if (subject == null)
+            {
+                return null;
+            }  
+            subject.ActiveSubject = ActiveSubject;
+            await _db.SaveChangesAsync();
+            return subject;
         }
 
         public async Task<List<Subject>> GetSubjects()

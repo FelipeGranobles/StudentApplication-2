@@ -32,28 +32,68 @@ namespace StudentApplication.Controllers
             return Ok(student);
         }
         [HttpPost]
-        public async Task<ActionResult<Student>> CreateStudent(Student student)
+        // public async Task<ActionResult<Student>> CreateStudent(string StudentName, string StudentLastName, string Email, string Birthday)
+        // {
+        //     var createdStudent = await _studentService.createStudent(StudentName,  StudentLastName,  Email,  Birthday);
+        //     if (createdStudent == null)
+        //     {
+        //         return BadRequest("Error");
+        //     }
+        //     return CreatedAtAction(nameof(getStudent), new { id = createdStudent.StudentId }, createdStudent);
+        // }
+
+        public async Task<ActionResult<Student>> CreateStudent(string StudentName, string StudentLastName, string Email, string Birthday)
         {
-            if (student == null)
+            // Validar la entrada
+            if (string.IsNullOrEmpty(StudentName) || string.IsNullOrEmpty(StudentLastName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Birthday))
             {
-                return BadRequest("Error");
+                return BadRequest("Todos los campos son obligatorios.");
             }
-            var createdStudent = await _studentService.createStudent(student.StudentName, student.StudentLastName, student.Email, student.Birthdate);
-            if (createdStudent == null)
+
+            try
             {
-                return BadRequest("Error");
+                var createdStudent = await _studentService.createStudent(StudentName, StudentLastName, Email, Birthday);
+                if (createdStudent == null)
+                {
+                    return BadRequest("No se pudo crear el estudiante.");
+                }
+
+                // Reemplazar "getStudent" con el nombre correcto de la acción que devuelve un estudiante por ID
+                return CreatedAtAction(nameof(getStudent), new { Studentid = createdStudent.StudentId }, createdStudent);
             }
-            return CreatedAtAction(nameof(getStudent), new { id = createdStudent.StudentId }, createdStudent);
+            catch (Exception ex)
+            {
+                // Manejar excepciones y devolver una respuesta apropiada
+                return StatusCode(500, $"Error al crear el estudiante: {ex.Message}");
+            }
         }
 
-        // [HttpPut("{StudentId}")]
-        // public async Task<ActionResult<Student>> updateStudent(int StudentId, Student student)
-        // {
-        //     if(StudentId != student.StudentId)
-        //     {
-        //         return BadRequest("Errot :c");
-        //     }
 
-        // }
+        [HttpPut("{StudentId}")]
+        public async Task<ActionResult<Student>> updateStudent(int StudentId, Student student)
+        {
+            if (StudentId != student.StudentId)
+            {
+                return BadRequest("Errot :c");
+            }
+            var update = await _studentService.updateStudent(student.StudentId);
+            if (update == null)
+            {
+                return NotFound("Error");
+            }
+            return Ok(update);
+        }
+
+        [HttpPut("{StudentId}/delete")]
+        public async Task<ActionResult<Student>> deleteStudent(int StudentId)
+        {
+            var deactivatedStd = await _studentService.deleteStudent(StudentId, false);
+            if(deactivatedStd == null)
+            {
+                return NotFound("Student not found");
+            }
+            return Ok(deactivatedStd);
+        }
+
     }
 }

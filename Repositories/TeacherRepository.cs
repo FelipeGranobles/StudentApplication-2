@@ -10,7 +10,7 @@ namespace StudentApplication.Repositories
         Task<Teacher> GetTeacher(int TeacherId);
         Task<Teacher> CreateTeacher(string TeacherName, string TeacherLastName, string TeacherEmail, string TeacherPhone);
         Task<Teacher> UpdateTeacher(Teacher teacher);
-        Task<Teacher> DeleteTeacher(Teacher teacher);
+        Task<Teacher> DeleteTeacher(int TeacherId, bool ActiveTeacher);
     }
 
     public class TeacherRepository : ITeacherRepository
@@ -29,7 +29,8 @@ namespace StudentApplication.Repositories
                 TeacherName = TeacherName,
                 TeacherLastName = TeacherLastName,
                 TeacherEmail = TeacherEmail,
-                TeacherPhone = TeacherPhone
+                TeacherPhone = TeacherPhone,
+                ActiveTeacher = true
             };
 
             await _db.Teachers.AddAsync(NewTeacher);
@@ -39,14 +40,9 @@ namespace StudentApplication.Repositories
             // throw new NotImplementedException();
         }
 
-        public Task<Teacher> DeleteTeacher(Teacher teacher)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Teacher> GetTeacher(int TeacherId)
         {
-            return await _db.Teachers.FirstOrDefaultAsync( u => u.TeacherId == TeacherId);
+            return await _db.Teachers.FirstOrDefaultAsync(u => u.TeacherId == TeacherId);
         }
 
         public async Task<List<Teacher>> GetTeachers()
@@ -57,6 +53,17 @@ namespace StudentApplication.Repositories
         public async Task<Teacher> UpdateTeacher(Teacher teacher)
         {
             _db.Teachers.Update(teacher);
+            await _db.SaveChangesAsync();
+            return teacher;
+        }
+        public async Task<Teacher> DeleteTeacher(int TeacherId, bool ActiveTeacher)
+        {
+            var teacher = await _db.Teachers.FindAsync(TeacherId);
+            if (teacher == null)
+            {
+                return null;
+            }
+            teacher.ActiveTeacher = ActiveTeacher;
             await _db.SaveChangesAsync();
             return teacher;
         }

@@ -8,16 +8,12 @@ namespace StudentApplication.Context
         {
 
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Student>().HasKey(e => e.StudentId);
 
             modelBuilder.Entity<Grade>().HasKey(e => e.GradeId);
         }
-
-
-
         public DbSet<Student> Students { get; set; }
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Class> Classs { get; set; }

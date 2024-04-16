@@ -10,7 +10,7 @@ namespace StudentApplication.Repositories
         Task<Grade> GetGrade(int GradeId);
         Task<Grade> CreateGrade (int StudentId, int SubjectId, string Description, float Score);
         Task<Grade> UpdateGrade (Grade grade);
-        Task<Grade> DeleteGrade (Grade grade);   
+        Task<Grade> DeleteGrade (int GradeId,bool ActiveGrade);   
     }
 
     public class GradeRepository : IGradeRepository
@@ -29,34 +29,37 @@ namespace StudentApplication.Repositories
                 StudentId = StudentId,
                 SubjectId = SubjectId,
                 Description = Description,
-                Score = Score
-            };
+                Score = Score,
+                ActiveGrade = true
+            };  
             await _db.Grades.AddAsync(newGrade);
             _db.SaveChanges();
             return newGrade;
 
             // throw new NotImplementedException();
-
         }
-
-        public Task<Grade> DeleteGrade(Grade grade)
-        {
-            throw new NotImplementedException();
-        }
-
         public  async Task<List<Grade>> GetGrades()
         {
             return await _db.Grades.ToListAsync();
         }
-
         public async Task<Grade> GetGrade(int GradeId)
         {
             return await _db.Grades.FirstOrDefaultAsync(u => u.GradeId == GradeId);
         }
-
         public async Task<Grade> UpdateGrade(Grade grade)
         {
            _db.Grades.Update(grade);
+            await _db.SaveChangesAsync();
+            return grade;
+        }
+        public async Task<Grade> DeleteGrade(int GradeId, bool ActiveGrade)
+        {
+            var grade = await _db.Grades.FindAsync(GradeId);
+            if (grade == null)
+            {
+                return null;
+            }
+            grade.ActiveGrade = ActiveGrade;
             await _db.SaveChangesAsync();
             return grade;
         }
