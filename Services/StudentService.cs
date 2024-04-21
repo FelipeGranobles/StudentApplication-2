@@ -3,17 +3,19 @@ using StudentApplication.Repositories;
 
 namespace StudentApplication.Services
 {
+
     public interface IStudentService
     {
         Task<List<Student>> getStudents();
-        Task<Student> getStudent(int studentId);
-        Task<Student> createStudent(string studentName, string studentLastName, string email, string birthday);
-        Task<Student> updateStudent(int studentId, string? studentName = null, string? studentLastName = null, string? email = null, string? birthday = null);
-        Task<Student> deleteStudent(int studentId, bool active = false);
+        Task<Student> getStudent(int StudentId);
+        Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday);
+        Task<Student> updateStudent(int StudentId, string? StudentName = null, string? StudentLastName = null, string? Email = null, string? Birthday = null);
+        Task<Student> deleteStudent(int StudentId, bool Active = false);
     }
 
     public class StudentService : IStudentService
     {
+
         private readonly IStudentRepository _studentRepository;
 
         public StudentService(IStudentRepository studentRepository)
@@ -21,14 +23,14 @@ namespace StudentApplication.Services
             _studentRepository = studentRepository;
         }
 
-        public async Task<Student> createStudent(string studentName, string studentLastName, string email, string birthday)
+        public async Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday)
         {
-            return await _studentRepository.createStudent(studentName, studentLastName, email, birthday);
+            return await _studentRepository.createStudent(StudentName, StudentLastName, Email, Birthday);
         }
 
-        public async Task<Student> getStudent(int studentId)
+        public async Task<Student> getStudent(int StudentId)
         {
-            return await _studentRepository.getStudent(studentId);
+            return await _studentRepository.getStudent(StudentId);
         }
 
         public async Task<List<Student>> getStudents()
@@ -36,51 +38,54 @@ namespace StudentApplication.Services
             return await _studentRepository.getStudents();
         }
 
-        public async Task<Student> updateStudent(int studentId, string? studentName = null, string? studentLastName = null, string? email = null, string? birthday = null)
+        public async Task<Student> updateStudent(int StudentId, string? StudentName = null, string? StudentLastName = null, string? Email = null, string? Birthday = null)
         {
-            if (studentId <= 0)
+            Student student = await _studentRepository.getStudent(StudentId);
+
+            if (StudentId<= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(studentId), "El ID del estudiante debe ser un número positivo.");
+                throw new ArgumentException("Student ID debe ser numero positivo.");
             }
 
             if (student == null)
             {
                 return null;
             }
-
-            if (studentName != null)
+            else
+                if (StudentName != null)
             {
-                student.StudentName = studentName;
+                student.StudentName = StudentName;
             }
-
+            if (StudentLastName != null)
             {
-                student.StudentLastName = studentLastName;
+                student.StudentLastName = StudentLastName;
             }
-
+            if (Email != null)
             {
-                student.Email = email;
+                student.Email = Email;
             }
-
+            if (Birthday != null)
             {
-                if (DateTime.TryParse(birthday, out DateTime birthdate))
+                student.Birthdate = Birthday;
             }
 
             return await _studentRepository.updateStudent(student);
         }
 
-        public async Task<Student> deleteStudent(int studentId, bool active = false)
+        public async Task<Student> deleteStudent(int StudentId, bool Active)
         {
-            Student student = await _studentRepository.getStudent(studentId);
+            Student student = await _studentRepository.getStudent(StudentId);
             if (student == null)
             {
                 return null; 
             }
-            if (active)
+            if (Active)
             {
-                student.Active = active;
+                student.Active = Active; 
             }
-            await _studentRepository.deleteStudent(studentId, active);
+            await _studentRepository.deleteStudent(student.StudentId,Active);
             return student;
         }
+
     }
 }

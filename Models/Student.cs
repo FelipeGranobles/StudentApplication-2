@@ -13,7 +13,7 @@ namespace StudentApplication.Models
         public string Email { get; set; }
         public  string Birthdate { get; set; }
         public bool Active { get; set; } = true;
-        public  List<Grade> Grades { get; set; }
-        public  List<Attendance> Attendances { get; set; }
+      //  public  List<Grade> Grades { get; set; }
+       // public  List<Attendance> Attendances { get; set; }
     }
 }

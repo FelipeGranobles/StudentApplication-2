@@ -11,16 +11,17 @@ namespace StudentApplication.Controllers
     {
         private readonly IStudentService _studentService;
 
+        public StudentController(IStudentService studentService)
         {
             _studentService = studentService;
         }
         [HttpGet]
-        public async Task<ActionResult<List<Student>>> getStudents()
+        public async Task<ActionResult<List<Student>>> GetStudents()
         {
             return Ok(await _studentService.getStudents());
         }
         [HttpGet("{StudentId}")]
-        public async Task<ActionResult<Student>> getStudent(int StudentId)
+        public async Task<ActionResult<Student>> GetStudent(int StudentId)
         {
             var student = await _studentService.getStudent(StudentId);
             if (student == null)
@@ -46,29 +47,30 @@ namespace StudentApplication.Controllers
                     return BadRequest("No se pudo crear el estudiante.");
                 }
 
-                return CreatedAtAction(nameof(getStudent), new { StudentId = createdStudent.StudentId }, createdStudent);
+                return CreatedAtAction(nameof(GetStudent), new { StudentId = createdStudent.StudentId }, createdStudent);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error al crear el estudiante: {ex.Message}");
             }
         }
-
         [HttpPut("{StudentId}")]
-        public async Task<ActionResult<Student>> updateStudent(int StudentId, [FromBody] Student student)
+        public async Task<ActionResult<Student>> UpdateStudent(int StudentId, [FromBody] Student student)
         {
             if (StudentId != student.StudentId)
             {
                 return BadRequest("Error");
             }
 
-            var updatedStudent = await _studentService.updateStudent(student.StudentId);
+            var updatedStudent = await _studentService.updateStudent(StudentId, student.StudentName, student.StudentLastName, student.Email, student.Birthdate);
+
+            if (updatedStudent == null)
             {
                 return NotFound("Estudiante no encontrado");
             }
 
+            return Ok(updatedStudent);
         }
-
         [HttpPut("{StudentId}/deactivate")]
         public async Task<ActionResult<Student>> DeactivateStudent(int StudentId)
         {

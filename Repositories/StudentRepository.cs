@@ -8,7 +8,7 @@ namespace StudentApplication.Repositories
     {
         Task<List<Student>> getStudents();
         Task<Student> getStudent(int StudentId);
-        Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday); //duda para llenar el campo de Active 
+        Task<Student> createStudent(string StudentName, string StudentLastName, string Email, string Birthday); 
         Task<Student> updateStudent(Student student);
         Task<Student> deleteStudent(int StudentId, bool Active);
     }

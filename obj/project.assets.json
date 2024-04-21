@@ -4506,11 +4506,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/felipe/Downloads/StudentApplication 2/StudentApplication.csproj",
+      "projectUniqueName": "/Users/felipe/Downloads/StudentApplication 2 3/StudentApplication.csproj",
       "projectName": "StudentApplication",
-      "projectPath": "/Users/felipe/Downloads/StudentApplication 2/StudentApplication.csproj",
+      "projectPath": "/Users/felipe/Downloads/StudentApplication 2 3/StudentApplication.csproj",
       "packagesPath": "/Users/felipe/.nuget/packages/",
-      "outputPath": "/Users/felipe/Downloads/StudentApplication 2/obj/",
+      "outputPath": "/Users/felipe/Downloads/StudentApplication 2 3/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/felipe/.nuget/NuGet/NuGet.Config"
