@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentApplication.Models;
 using StudentApplication.Services;
-using StudentApplication.Context;
-
 
 namespace StudentApplication.Controllers
 {
@@ -11,8 +9,8 @@ namespace StudentApplication.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly StudentService _studentService;
-        public StudentController(StudentService studentService)
+        private readonly IStudentService _studentService;
+
         {
             _studentService = studentService;
         }
@@ -27,21 +25,11 @@ namespace StudentApplication.Controllers
             var student = await _studentService.getStudent(StudentId);
             if (student == null)
             {
-                return BadRequest("Student not found");
+                return NotFound("Estudiante no encontrado");
             }
             return Ok(student);
         }
         [HttpPost]
-        // public async Task<ActionResult<Student>> CreateStudent(string StudentName, string StudentLastName, string Email, string Birthday)
-        // {
-        //     var createdStudent = await _studentService.createStudent(StudentName,  StudentLastName,  Email,  Birthday);
-        //     if (createdStudent == null)
-        //     {
-        //         return BadRequest("Error");
-        //     }
-        //     return CreatedAtAction(nameof(getStudent), new { id = createdStudent.StudentId }, createdStudent);
-        // }
-
         public async Task<ActionResult<Student>> CreateStudent(string StudentName, string StudentLastName, string Email, string Birthday)
         {
             // Validar la entrada
@@ -58,42 +46,38 @@ namespace StudentApplication.Controllers
                     return BadRequest("No se pudo crear el estudiante.");
                 }
 
-                // Reemplazar "getStudent" con el nombre correcto de la acción que devuelve un estudiante por ID
-                return CreatedAtAction(nameof(getStudent), new { Studentid = createdStudent.StudentId }, createdStudent);
+                return CreatedAtAction(nameof(getStudent), new { StudentId = createdStudent.StudentId }, createdStudent);
             }
             catch (Exception ex)
             {
-                // Manejar excepciones y devolver una respuesta apropiada
                 return StatusCode(500, $"Error al crear el estudiante: {ex.Message}");
             }
         }
 
-
         [HttpPut("{StudentId}")]
-        public async Task<ActionResult<Student>> updateStudent(int StudentId, Student student)
+        public async Task<ActionResult<Student>> updateStudent(int StudentId, [FromBody] Student student)
         {
             if (StudentId != student.StudentId)
             {
-                return BadRequest("Errot :c");
+                return BadRequest("Error");
             }
-            var update = await _studentService.updateStudent(student.StudentId);
-            if (update == null)
+
+            var updatedStudent = await _studentService.updateStudent(student.StudentId);
             {
-                return NotFound("Error");
+                return NotFound("Estudiante no encontrado");
             }
-            return Ok(update);
+
         }
 
-        [HttpPut("{StudentId}/delete")]
-        public async Task<ActionResult<Student>> deleteStudent(int StudentId)
+        [HttpPut("{StudentId}/deactivate")]
+        public async Task<ActionResult<Student>> DeactivateStudent(int StudentId)
         {
-            var deactivatedStd = await _studentService.deleteStudent(StudentId, false);
-            if(deactivatedStd == null)
+            var deactivatedStudent = await _studentService.deleteStudent(StudentId, false);
+            if (deactivatedStudent == null)
             {
-                return NotFound("Student not found");
+                return NotFound("Estudiante no encontrado");
             }
-            return Ok(deactivatedStd);
+            return Ok(deactivatedStudent);
         }
-
     }
 }
